@@ -4,7 +4,7 @@ const writeStream = fs.createWriteStream(path.join(__dirname, "text.txt"));
 const { stdin, stdout, exit } = require('process');
 const textConsole = {
   START: "Hello! Enter your text below:\n",
-  FINISH: "Goodbyе! See you later!"
+  FINISH: "\nGoodbyе! See you later!"
 }
 
 stdout.write(textConsole.START)

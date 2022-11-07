@@ -17,26 +17,22 @@ fs.rm(newDir, { recursive: true, force: true }, () => {
 });
 
 function copyDirectory(assets, assetsDist) {
-  readdir(assets, {withFileTypes: true }).then((files) => {
-    files.forEach(file => {
-      if (file.isDirectory()) {
-        let assetsChild = path.join(assets, file.name);
-        let assetsDistChild = path.join(assetsDist, file.name);
-        copyDirectory(assetsChild, assetsDistChild);
-      } else {
-        fs.mkdir(assetsDist, { recursive: true }, function(err) {
+  mkdir(assetsDist, { recursive: true }).then(() => {
+    readdir(assets).then((files) => {
+      files.forEach(file => {
+        let assetsChild = path.join(assets, file);
+        let assetsDistChild = path.join(assetsDist, file);
+        fs.stat(assetsChild, (err, stats) => {
           if (err) throw err;
-        });
-        fs.copyFile(
-          path.join(assets, file.name),
-          path.join(assetsDist, file.name), 
-          function (err) {
-            if (err) throw err;
+          if (stats.isDirectory()) {
+            copyDirectory(assetsChild, assetsDistChild);
+          } else {
+            fs.createReadStream(assetsChild).pipe(fs.createWriteStream(assetsDistChild));
           }
-        );
-      }
+        });
+      });
     });
-  }); 
+  });
 }
 
 function mergeStyles() {

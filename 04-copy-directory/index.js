@@ -8,13 +8,15 @@ fs.rm(dirCopy, {
   force: true,
 }).finally(function() {
   fs.mkdir(dirCopy, {recursive: true});
-  fs.readdir(dir)
+  fs.readdir(dir, {withFileTypes: true })
     .then(files => {
       files.forEach(file => {
-        let pathFile = path.join(dir, file);
-        let pathFileCopy = path.join(dirCopy, file);
-        fs.copyFile(pathFile, pathFileCopy);
-        console.log(file);
+        if (file.isFile()) {
+          let pathFile = path.join(dir, file.name);
+          let pathFileCopy = path.join(dirCopy, file.name);
+          fs.copyFile(pathFile, pathFileCopy);
+          console.log(file.name);
+        }
       });
     });
 }); 
